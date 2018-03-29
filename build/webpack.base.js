@@ -6,6 +6,7 @@ const CleanWebpackPlugin = require('clean-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 // 提取css为单独文件 webpack4.0.0以上版本需要npm i extract-text-webpack-plugin@next -D
 const ExtractTextPlugin = require('extract-text-webpack-plugin');
+// 优化打包速速，开起多线程打包
 const HappyPack = require('happypack');
 
 module.exports = {
@@ -22,8 +23,8 @@ module.exports = {
         path: path.join(__dirname, '../dist'),
         // 文件名  [name]为chunk名，默认为main  [hash] 为文件hash值  :8取前8位
         filename: '[name].[hash:8].js',
-        // 给script link 加上base url  默认为/ 如有cnd加速，则填写cnd地址
-        publicPath: '/'
+        // 给script link 加上base url 如有cnd加速，则填写cnd地址
+        publicPath: './'
     },
     resolve: {
         // import时, 可以省略扩展名
@@ -88,7 +89,7 @@ module.exports = {
         // 每次构建前先删除dist目录
         new CleanWebpackPlugin(
             // 需要删除的文件夹或文件
-            path.join(__dirname, '../dist'),
+            [path.join(__dirname, '../dist/*.*')],
             {
                 // 需要配置root 不然会滤过 不生效
                 root: path.join(__dirname, '../')
@@ -120,6 +121,10 @@ module.exports = {
             threads: 4,
             // 用什么loader处理
             loaders: ['babel-loader']
+        }),
+        // 引入dll 优化打包速度 需要在html中引入vendor_dll.js
+        new webpack.DllReferencePlugin({
+            manifest: path.join(__dirname, '../dist/dll', 'manifest.json')
         }),
     ],
     optimization: {

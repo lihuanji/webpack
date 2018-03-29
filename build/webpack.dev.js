@@ -28,7 +28,7 @@ const dev = {
     plugins: [
         new webpack.HotModuleReplacementPlugin(),
         // 显示模块的相对路径
-        new webpack.NamedModulesPlugin()
+        new webpack.NamedModulesPlugin(),
     ]
 }
 
